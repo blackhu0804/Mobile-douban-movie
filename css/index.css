@@ -1,0 +1,45 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,body {
+  height: 100%;
+}
+body {
+  font-size: 12px;
+  line-height: 1.2;
+  background-color: #fff;
+  position: relative;
+}
+
+main {
+  height: calc(100vh - 50px);
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+main>section {
+  display: none;
+}
+main>section:first-child {
+  display: block;
+}
+footer {
+  position: absolute;
+  bottom: 0;
+  border-top: 1px solid #ccc;
+  height: 50px;
+  width: 100%;
+  display: flex;
+}
+footer>div {
+  flex: 1;
+  text-align: center;
+}
+footer>.active {
+  color: #FF5722;
+}
+footer>div>span {
+  display: block;
+  padding-top: 5px; 
+}
