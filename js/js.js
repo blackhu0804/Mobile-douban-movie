@@ -4,8 +4,12 @@ $('footer>div').click(function (){
 	$(this).addClass('active').siblings().removeClass('active')
 })
 var index = 0;
+var isLoading = false;
 function start() {
-	
+	if(isLoading) 
+		return;
+	isLoading = true;
+	$('.loading').show();
 	$.ajax({
 		url: 'http://api.douban.com/v2/movie/top250',
 		type: 'GET',
@@ -20,15 +24,23 @@ function start() {
 		index+=20
 	}).fail(function(){
 		console.log('err..')
+	}).always(function() {
+		isLoading = false;
+		$('.loading').hide();
 	})
 }
 
 start();
-
+var clock;
 $('main').scroll(function() {
-	if($('section').eq(0).height() - 10 <= $('main').scrollTop() + $('main').height()){
-		start();
+	if(clock) {
+		clearTimeout(clock)
 	}
+	clock = setTimeout(function() {
+		if($('section').eq(0).height() - 10 <= $('main').scrollTop() + $('main').height()){
+			start();
+		}
+	},300)
 })
 
 function setData(data){
@@ -71,6 +83,6 @@ function setData(data){
 			})
 			return actorArr.join('、');
 		})
-		$('section').eq(0).append($node);
+		$('#top250').append($node);
 	})
 }
