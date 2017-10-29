@@ -17,12 +17,15 @@ body {
 }
 
 main {
-  height: calc(100vh - 50px);
-  overflow: scroll;
+  height: 100%;
   -webkit-overflow-scrolling: touch;
 }
 main>section {
   display: none;
+  height: calc(100% - 45px);
+  padding: 10px;
+  background: #fff;
+  overflow: scroll;
 }
 main>section:first-child {
   display: block;
