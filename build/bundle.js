@@ -114,9 +114,11 @@ module.exports = isToBottom;
 var isToBottom = __webpack_require__(0);
 var Tab = __webpack_require__(2);
 var Top250 = __webpack_require__(3);
+var usBox = __webpack_require__(4);
 
 Tab.init($('footer>div'), $('section'));
 Top250.init();
+usBox.init();
 
 /***/ }),
 /* 2 */
@@ -228,6 +230,59 @@ var Top250 = function () {
 }();
 
 module.exports = Top250;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var isToBottom = __webpack_require__(0);
+
+var usBox = function () {
+  function usbox() {
+    this.$container = $('#beimei');
+    this.$content = this.$container.find('.container');
+    this.start();
+  }
+
+  usbox.prototype = {
+    start: function start() {
+      var self = this;
+      this.getData(function (data) {
+        self.render(data);
+      });
+    },
+    getData: function getData(callback) {
+      var self = this;
+      $.ajax({
+        url: 'http://api.douban.com/v2/movie/us_box',
+        type: 'GET',
+        dataType: 'jsonp'
+      }).done(function (ret) {
+        callback && callback(ret);
+      }).fail(function () {
+        console.log('数据异常');
+      }).always(function () {});
+    },
+    render: function render(data) {
+      console.log(data);
+      var self = this;
+      data.subjects.forEach(function (movie) {
+        self.$content.append(isToBottom.creatNode(movie.subject));
+      });
+    }
+  };
+
+  return {
+    init: function init() {
+      new usbox();
+    }
+  };
+}();
+
+module.exports = usBox;
 
 /***/ })
 /******/ ]);
