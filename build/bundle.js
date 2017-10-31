@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "build/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,12 +70,56 @@
 "use strict";
 
 
-var Tab = __webpack_require__(1);
+var isToBottom = {
+	isToEnd: function isToEnd($viewport, $content) {
+		return $viewport.height() + $viewport.scrollTop() + 10 >= $content.height();
+	},
+	creatNode: function creatNode(movie) {
+		var tpl = '\n\t\t<div class="item">\n\t\t\t<a href="#">\n\t\t\t\t<div class="cover">\n\t\t\t\t\t<img src="http://img7.doubanio.com/img/celebrity/small/17525.jpg" alt="">          \n\t\t\t\t</div>\n\t\t\t\t<div class="detail">\n\t\t\t\t\t<h2>\u9738\u738B\u522B\u59EC</h2>\n\t\t\t\t\t<div class="extra"><span class="score">9.3\u5206</span> / <span class="collect"></span>\u6536\u85CF</div>\n\t\t\t\t\t<div class="extra"><span class="year"></span> / <span class="type"></span></div>\n\t\t\t\t\t<div class="extra">\u5BFC\u6F14\uFF1A<span class="director"></span></div>\n\t\t\t\t\t<div class="extra">\u4E3B\u6F14\uFF1A<span class="actor"></span></div>\n\t\t\t\t</div>\n\t\t\t</a>\n\t\t</div>\n\t\t';
+		var $node = $(tpl);
+		$node.find('a').attr('href', movie.alt);
+		$node.find('.cover img').attr('src', movie.images.medium);
+		$node.find('.detail h2').text(movie.title);
+		$node.find('.detail .score').text(movie.rating.average);
+		$node.find('.detail .collect').text(movie.collect_count);
+		$node.find('.detail .year').text(movie.year);
+		$node.find('.detail .type').text(movie.genres.join('/'));
+		$node.find('.director').text(function () {
+			var directorsArr = [];
+			movie.directors.forEach(function (item) {
+				directorsArr.push(item.name);
+			});
+			return directorsArr.join('、');
+		});
+		$node.find('.actor').text(function () {
+			var actorArr = [];
+			movie.casts.forEach(function (item) {
+				actorArr.push(item.name);
+			});
+			return actorArr.join('、');
+		});
+		return $node;
+	}
+};
 
-Tab.init($('footer>div'), $('section'));
+module.exports = isToBottom;
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var isToBottom = __webpack_require__(0);
+var Tab = __webpack_require__(2);
+var Top250 = __webpack_require__(3);
+
+Tab.init($('footer>div'), $('section'));
+Top250.init();
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -106,6 +150,84 @@ var Tab = function () {
 }();
 
 module.exports = Tab;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var isToBottom = __webpack_require__(0);
+
+var Top250 = function () {
+  function top250() {
+    this.$container = $('main #top250');
+    this.$content = this.$container.find('.container');
+    this.index = 0;
+    this.isLoading = false;
+    this.isFinish = false;
+    this.bind();
+    this.start();
+  }
+
+  top250.prototype = {
+    bind: function bind() {
+      var self = this;
+      this.$container.scroll(function () {
+        if (!self.isFinish && isToBottom.isToEnd(self.$container, self.$content)) {
+          self.start();
+        }
+      });
+    },
+    start: function start() {
+      var self = this;
+      this.getData(function (data) {
+        self.render(data);
+      });
+    },
+    getData: function getData(callback) {
+      var self = this;
+      if (self.isLoading) return;
+      self.isLoading = true;
+      self.$container.find('.loading').show();
+      $.ajax({
+        url: 'http://api.douban.com/v2/movie/top250',
+        type: 'GET',
+        data: {
+          start: self.index,
+          count: 20
+        },
+        dataType: 'jsonp'
+      }).done(function (ret) {
+        self.index += 20;
+        if (self.index >= ret.total) {
+          self.isFinish = true;
+        }
+        callback && callback(ret);
+      }).fail(function () {
+        console.log('数据异常');
+      }).always(function () {
+        self.isLoading = false;
+        self.$container.find('.loading').hide();
+      });
+    },
+    render: function render(data) {
+      var self = this;
+      data.subjects.forEach(function (movie) {
+        self.$content.append(isToBottom.creatNode(movie));
+      });
+    }
+  };
+
+  return {
+    init: function init() {
+      new top250();
+    }
+  };
+}();
+
+module.exports = Top250;
 
 /***/ })
 /******/ ]);
