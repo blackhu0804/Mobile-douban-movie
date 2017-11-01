@@ -17,7 +17,7 @@ var usBox = (function() {
     getData : function(callback) {
       var self = this;
       $.ajax({
-        url: 'http://api.douban.com/v2/movie/us_box',
+        url: 'https://api.douban.com/v2/movie/us_box',
         type: 'GET',
         dataType: 'jsonp'
       }).done(function(ret){

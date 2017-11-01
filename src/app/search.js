@@ -27,7 +27,7 @@ var Search = (function() {
       var self = this;
       self.$container.find('.loading').show();
       $.ajax({
-        url: 'http://api.douban.com/v2/movie/search',
+        url: 'https://api.douban.com/v2/movie/search',
         type: 'GET',
         data: {
           q: self.keyword
