@@ -12,7 +12,7 @@ var isToBottom = {
 				</div>
 				<div class="detail">
 					<h2>霸王别姬</h2>
-					<div class="extra"><span class="score">9.3分</span> / <span class="collect"></span>收藏</div>
+					<div class="extra"><span class="score">9.3</span>分 / <span class="collect"></span>收藏</div>
 					<div class="extra"><span class="year"></span> / <span class="type"></span></div>
 					<div class="extra">导演：<span class="director"></span></div>
 					<div class="extra">主演：<span class="actor"></span></div>

@@ -75,7 +75,7 @@ var isToBottom = {
 		return $viewport.height() + $viewport.scrollTop() + 10 >= $content.height();
 	},
 	creatNode: function creatNode(movie) {
-		var tpl = '\n\t\t<div class="item">\n\t\t\t<a href="#">\n\t\t\t\t<div class="cover">\n\t\t\t\t\t<img src="http://img7.doubanio.com/img/celebrity/small/17525.jpg" alt="">          \n\t\t\t\t</div>\n\t\t\t\t<div class="detail">\n\t\t\t\t\t<h2>\u9738\u738B\u522B\u59EC</h2>\n\t\t\t\t\t<div class="extra"><span class="score">9.3\u5206</span> / <span class="collect"></span>\u6536\u85CF</div>\n\t\t\t\t\t<div class="extra"><span class="year"></span> / <span class="type"></span></div>\n\t\t\t\t\t<div class="extra">\u5BFC\u6F14\uFF1A<span class="director"></span></div>\n\t\t\t\t\t<div class="extra">\u4E3B\u6F14\uFF1A<span class="actor"></span></div>\n\t\t\t\t</div>\n\t\t\t</a>\n\t\t</div>\n\t\t';
+		var tpl = '\n\t\t<div class="item">\n\t\t\t<a href="#">\n\t\t\t\t<div class="cover">\n\t\t\t\t\t<img src="http://img7.doubanio.com/img/celebrity/small/17525.jpg" alt="">          \n\t\t\t\t</div>\n\t\t\t\t<div class="detail">\n\t\t\t\t\t<h2>\u9738\u738B\u522B\u59EC</h2>\n\t\t\t\t\t<div class="extra"><span class="score">9.3</span>\u5206 / <span class="collect"></span>\u6536\u85CF</div>\n\t\t\t\t\t<div class="extra"><span class="year"></span> / <span class="type"></span></div>\n\t\t\t\t\t<div class="extra">\u5BFC\u6F14\uFF1A<span class="director"></span></div>\n\t\t\t\t\t<div class="extra">\u4E3B\u6F14\uFF1A<span class="actor"></span></div>\n\t\t\t\t</div>\n\t\t\t</a>\n\t\t</div>\n\t\t';
 		var $node = $(tpl);
 		$node.find('a').attr('href', movie.alt);
 		$node.find('.cover img').attr('src', movie.images.medium);
@@ -115,10 +115,12 @@ var isToBottom = __webpack_require__(0);
 var Tab = __webpack_require__(2);
 var Top250 = __webpack_require__(3);
 var usBox = __webpack_require__(4);
+var Search = __webpack_require__(5);
 
 Tab.init($('footer>div'), $('section'));
 Top250.init();
 usBox.init();
+Search.init();
 
 /***/ }),
 /* 2 */
@@ -283,6 +285,74 @@ var usBox = function () {
 }();
 
 module.exports = usBox;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var isToBottom = __webpack_require__(0);
+
+var Search = function () {
+  function search() {
+    this.$container = $('#search');
+    this.$content = this.$container.find('.search-result');
+    this.keyword = '';
+    this.bind();
+    this.start();
+  }
+
+  search.prototype = {
+    bind: function bind() {
+      var self = this;
+      this.$container.find('.button').click(function () {
+        self.keyword = self.$container.find('input').val();
+        self.start();
+      });
+    },
+    start: function start() {
+      var self = this;
+      this.getData(function (data) {
+        self.render(data);
+      });
+    },
+    getData: function getData(callback) {
+      var self = this;
+      self.$container.find('.loading').show();
+      $.ajax({
+        url: 'http://api.douban.com/v2/movie/search',
+        type: 'GET',
+        data: {
+          q: self.keyword
+        },
+        dataType: 'jsonp'
+      }).done(function (ret) {
+        callback && callback(ret);
+      }).fail(function () {
+        console.log('数据异常');
+      }).always(function () {
+        self.$container.find('.loading').hide();
+      });
+    },
+    render: function render(data) {
+      var self = this;
+      console.log(data);
+      data.subjects.forEach(function (movie) {
+        self.$content.append(isToBottom.creatNode(movie));
+      });
+    }
+  };
+
+  return {
+    init: function init() {
+      new search();
+    }
+  };
+}();
+
+module.exports = Search;
 
 /***/ })
 /******/ ]);
