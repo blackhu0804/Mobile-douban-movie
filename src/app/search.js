@@ -43,6 +43,7 @@ var Search = (function() {
     },
     render : function(data) {
       var self = this;
+      this.$content.empty();
       console.log(data)
       data.subjects.forEach(function(movie) {
         self.$content.append(isToBottom.creatNode(movie));
