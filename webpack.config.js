@@ -18,6 +18,11 @@ module.exports = {
     new ExtractTextPlugin("css/[name].css"),
     new webpack.ProvidePlugin({
       $: "jquery"
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false
+      }
     })
   ],
   module: {
